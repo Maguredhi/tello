@@ -1,0 +1,12 @@
+拖拉 gem acts_as_list
+
+User
+  - has_many List
+    - name
+    - user:belongs_to
+    - position:integer
+
+  - has_many Card
+    - name
+    - list:belongs_to
+    - position:integer

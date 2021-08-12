@@ -1,3 +1,6 @@
-import '@fortawesome/fontawesome-free/css/all.min.css'
+import "tailwindcss/base";
+import "tailwindcss/components";
+import "tailwindcss/utilities";
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 import './application.scss';
