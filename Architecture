@@ -10,3 +10,6 @@ User
     - name
     - list:belongs_to
     - position:integer
+
+$ rails g scaffold List name user:belongs_to position:integer
+$ rails g scaffold Card name list:belongs_to position:integer
