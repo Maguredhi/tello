@@ -13,6 +13,7 @@ ActiveStorage.start()
 
 import Vue from 'vue/dist/vue.esm';
 import List from 'components/list';
+import draggable from 'vuedraggable'
 
 document.addEventListener("turbolinks:load", function (event) {
   let el = document.querySelector('#board');
@@ -24,8 +25,31 @@ document.addEventListener("turbolinks:load", function (event) {
       data: {
         lists: JSON.parse(el.dataset.lists)
       },
-      // 註冊你要傳的元件
-      components: { List }
+      // 註冊你要傳入的元件
+      components: { List, draggable },
+      methods: {
+        listMoved(event) {
+          console.log(event);
+
+          let data = new FormData();
+          // 因 act_as_links position 是從 1 開始算，所以抓到資料後必須 +1 傳進 position
+          data.append("list[position]", event.moved.newIndex + 1);
+
+          Rails.ajax({
+            // /list/2/move
+            url: `/lists/${this.lists[event.moved.newIndex].id}/move`,
+            type: 'PUT',
+            data,
+            dataType: 'json',
+            success: resp => {
+              console.log(resp);
+            },
+            error: err => {
+              console.log(err);
+            }
+          })
+        }
+      }
     });
   }
 })
