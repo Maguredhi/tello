@@ -22,8 +22,12 @@ document.addEventListener("turbolinks:load", function (event) {
     new Vue({
       // el: el ES6 若 key value 一樣可寫一次就好
       el,
+      // data: {
+      // 本來是用 JSON.parse 將整包 lists 傳進 data
+      //   lists: JSON.parse(el.dataset.lists)
+      // },
       data: {
-        lists: JSON.parse(el.dataset.lists)
+        lists: []
       },
       // 註冊你要傳入的元件
       components: { List, draggable },
@@ -49,6 +53,20 @@ document.addEventListener("turbolinks:load", function (event) {
             }
           })
         }
+      },
+      beforeMount() {
+        Rails.ajax({
+          url: '/lists.json',
+          type: 'GET',
+          dataType: 'json',
+          success: resp => {
+            this.lists = resp
+            console.log(resp)
+          },
+          error: err => {
+            console.log(err)
+          }
+        })
       }
     });
   }
