@@ -13,7 +13,9 @@ ActiveStorage.start()
 
 import Vue from 'vue/dist/vue.esm';
 import List from 'components/list';
-import draggable from 'vuedraggable'
+import draggable from 'vuedraggable';
+import store from 'stores/list';
+import { mapGetters, mapActions } from 'vuex';
 
 document.addEventListener("turbolinks:load", function (event) {
   let el = document.querySelector('#board');
@@ -22,51 +24,30 @@ document.addEventListener("turbolinks:load", function (event) {
     new Vue({
       // el: el ES6 若 key value 一樣可寫一次就好
       el,
+      store,
       // data: {
-      // 本來是用 JSON.parse 將整包 lists 傳進 data
+      // 本來是用 JSON.parse 將整包 lists 傳進 data，目前改用 Vuex
       //   lists: JSON.parse(el.dataset.lists)
       // },
-      data: {
-        lists: []
+      computed: {
+        // ...mapGetters(["lists"])
+        lists: {
+          get() {
+            return this.$store.state.lists;
+          },
+
+          set(value) {
+            this.$store.commit('UPDATE_LISTS', value);
+          }
+        }
       },
       // 註冊你要傳入的元件
       components: { List, draggable },
       methods: {
-        listMoved(event) {
-          console.log(event);
-
-          let data = new FormData();
-          // 因 act_as_links position 是從 1 開始算，所以抓到資料後必須 +1 傳進 position
-          data.append("list[position]", event.moved.newIndex + 1);
-
-          Rails.ajax({
-            // /list/2/move
-            url: `/lists/${this.lists[event.moved.newIndex].id}/move`,
-            type: 'PUT',
-            data,
-            dataType: 'json',
-            success: resp => {
-              console.log(resp);
-            },
-            error: err => {
-              console.log(err);
-            }
-          })
-        }
+        ...mapActions(["loadList", "moveList"]),
       },
       beforeMount() {
-        Rails.ajax({
-          url: '/lists.json',
-          type: 'GET',
-          dataType: 'json',
-          success: resp => {
-            this.lists = resp
-            console.log(resp)
-          },
-          error: err => {
-            console.log(err)
-          }
-        })
+        this.loadList();
       }
     });
   }
