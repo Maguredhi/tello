@@ -11,8 +11,14 @@
   </head>
 
   <body>
-    <%= render 'shared/navbar' %>
-    <%= render 'shared/flash' if notice %>
-    <%= yield %>
+  <!-- flex-col: 直列方式排版，h-screen: 螢幕高度滿版，overflow-hidden: 當設定高度與寬度後，超過的部分會隱藏起來 -->
+    <section class="flex flex-col h-screen overflow-hidden">
+      <%= render 'shared/navbar' %>
+      <%= render 'shared/flash' if notice %>
+      <!-- overflow-auto: 橫向捲軸，h-full: 撐滿整個畫面 -->
+      <div class="overflow-auto h-full">
+        <%= yield %>
+      </div>
+    </section>
   </body>
 </html>

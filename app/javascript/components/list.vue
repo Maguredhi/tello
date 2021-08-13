@@ -102,7 +102,8 @@ export default {
 }
 
 .list {
-  @apply bg-gray-300 mx-2 w-64 rounded px-3 py-2;
+  // 預設 flex 會自動展開，這裡 list 改成 flex-none
+  @apply bg-gray-300 mx-2 w-64 rounded p-3 flex-none h-full;
 
   .header {
     @apply font-bold;
