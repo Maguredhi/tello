@@ -22,6 +22,7 @@ document.addEventListener("turbolinks:load", function (event) {
   let el = document.querySelector('#board');
 
   if (el) {
+    window.$store = store;
     new Vue({
       // el: el ES6 若 key value 一樣可寫一次就好
       el,
