@@ -1,5 +1,3 @@
 <div id="board" class="mt-2 px-1 flex" data-lists="<%= @lists.to_json(include: :cards) %>">
-  <div class="bg-gray-300 mx-2 w-64 rounded" v-for="list in lists">
-    <h2 class="px-3 py-2 font-bold">{{ list.name }}</h2>
-  </div>
+  <List v-for="list in lists" :list="list" :key="list.id"></List>
 </div>
