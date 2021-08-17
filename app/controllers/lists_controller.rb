@@ -1,19 +1,15 @@
 class ListsController < ApplicationController
-  before_action :set_list, only: %i[ show edit update destroy ]
+  before_action :set_list, only: %i[ update destroy move]
   before_action :authenticate_user!
 
   def index
     @lists = current_user.lists
   end
 
-  def show
-  end
-
-  def new
-    @list = current_user.lists.new
-  end
-
-  def edit
+  def move
+    # act_as_links 的語法 insert_at，要把 data 塞到哪個地方
+    @list.insert_at(list_params[:position].to_i)
+    render 'show.json'
   end
 
   def create
@@ -52,7 +48,7 @@ class ListsController < ApplicationController
 
   private
     def set_list
-      @list = current_lists.find(params[:id])
+      @list = current_user.lists.find(params[:id])
     end
 
 

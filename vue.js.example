@@ -1,0 +1,100 @@
+// 分三大區塊，父層 Vue、中層 Vuex、子層 components
+// 透過中層 Vuex 將子層一同管理，將狀態集中管理，並讓子層能互相連結操作
+// 父層 JS import Vue 跟 components
+
+import Vue from 'vue/dist/vue.esm';
+import List from 'components/list';
+import draggable from 'vuedraggable';
+
+new Vue({
+  // el: el ES6 若 key value 一樣可寫一次就好
+  el,
+  store,
+  //使用 Vuex 改用 computed 抓 data，並在裡面使用 get() set()
+  // data: {
+  // },
+  computed: {
+    // ...mapGetters(["lists"])
+    lists: {
+      get() {
+        return this.$store.state.lists;
+      },
+      set(value) {
+        this.$store.commit('UPDATE_LISTS', value);
+      }
+    }
+  },
+  // 註冊要傳入的元件
+  components: { List, draggable },
+  // 引入要使用的方法
+  methods: {
+    ...mapActions(["loadList", "moveList"]),
+  },
+  // Vue mount 之前去 Vuex 把 data 讀進來 
+  beforeMount() {
+    this.loadList();
+  }
+});
+
+// 子層 JS import Vue 跟 Vuex
+//import Vue from 'vue/dist/vue.esm';
+//import Vuex from 'vuex';
+
+Vue.use(Vuex);
+
+export default new Vuex.Store({
+  // 定義核心
+  // 狀態
+  state: {
+    lists: []
+  },
+  // get
+  getters: {
+    lists: state => state.lists
+  },
+  // post
+  mutations: {
+    UPDATE_LISTS(state, lists) {
+      state.lists = lists
+    }
+  },
+  // 執行動作
+  actions: {
+    moveList({ commit, state }, event) {
+      console.log(event);
+
+      let data = new FormData();
+      // 因 act_as_links position 是從 1 開始算，所以抓到資料後必須 +1 傳進 position
+      data.append("list[position]", event.moved.newIndex + 1);
+
+      Rails.ajax({
+        // /list/2/move
+        url: `/lists/${state.lists[event.moved.newIndex].id}/move`,
+        type: 'PUT',
+        data,
+        dataType: 'json',
+        success: resp => {
+          console.log(resp);
+        },
+        error: err => {
+          console.log(err);
+        }
+      })
+    },
+
+    loadList({ commit }) {
+      Rails.ajax({
+        url: '/lists.json',
+        type: 'GET',
+        dataType: 'json',
+        success: resp => {
+          commit("UPDATE_LISTS", resp)
+          console.log(resp)
+        },
+        error: err => {
+          console.log(err)
+        }
+      })
+    }
+  }
+});
