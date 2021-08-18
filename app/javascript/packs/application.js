@@ -11,11 +11,12 @@ ActiveStorage.start()
 
 // vue.js
 
-import Vue from 'vue/dist/vue.esm';
-import List from 'components/list';
+import Vue from 'vue/dist/vue.esm'
 import draggable from 'vuedraggable';
 import store from 'stores/list';
 import { mapGetters, mapActions } from 'vuex';
+import List from 'components/list';
+import Newlist from 'components/newlist';
 
 document.addEventListener("turbolinks:load", function (event) {
   let el = document.querySelector('#board');
@@ -42,7 +43,7 @@ document.addEventListener("turbolinks:load", function (event) {
         }
       },
       // 註冊你要傳入的元件
-      components: { List, draggable },
+      components: { List, Newlist, draggable },
       methods: {
         ...mapActions(["loadList", "moveList"]),
       },
